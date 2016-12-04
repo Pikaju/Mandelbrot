@@ -135,7 +135,7 @@ public class Mandelbrot extends Canvas {
 		
 		for (int x = 0; x < width; x += 1) {
 			for (int y = 0; y < height; y += 1) {
-				double cx = ((x / (double) width) - 0.5) * zoom - 0.3 + xOff;
+				double cx = ((x / (double) width) - 0.5) * (width / (float) height) * zoom - 0.3 + xOff;
 				double cy = ((y / (double) height) - 0.5) * zoom + yOff;
 				double zx = cx;
 				double zy = cy;
