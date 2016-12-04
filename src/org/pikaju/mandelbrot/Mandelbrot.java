@@ -3,7 +3,8 @@ package org.pikaju.mandelbrot;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -17,8 +18,8 @@ public class Mandelbrot extends Canvas {
 
 	public static Mandelbrot i;
 	
-	public int scale = 1;
-	private int newScale = scale;
+	public float scale = 1;
+	private float newScale = scale;
 	
 	private int[] pixels;
 	private BufferedImage image;
@@ -34,7 +35,6 @@ public class Mandelbrot extends Canvas {
 	public boolean rightdown = false;
 
 	public Mandelbrot() {
-		createFrameBuffers(2);
 		setPreferredSize(new Dimension(640, 480));
 		addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
@@ -42,8 +42,8 @@ public class Mandelbrot extends Canvas {
 				if (e.getKeyChar() == 'a') iterations--;
 				if (iterations < 2) iterations = 2;
 				
-				if (e.getKeyChar() == 'w') newScale = scale - 1;
-				if (e.getKeyChar() == 's') newScale = scale + 1;
+				if (e.getKeyChar() == 'w') newScale = scale / 2;
+				if (e.getKeyChar() == 's') newScale = scale * 2;
 			}
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_E) i.edown = false;
@@ -66,11 +66,10 @@ public class Mandelbrot extends Canvas {
 		});
 	}
 	
-	private void createFrameBuffers(int scale) {
-		if (scale < 1) scale = 1;
+	private void createFrameBuffers(float scale) {
 		this.scale = scale;
-		width = 640 / this.scale;
-		height = 480 / this.scale;
+		width = (int) (getWidth() / this.scale);
+		height = (int) (getHeight() / this.scale);
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	}
@@ -84,6 +83,7 @@ public class Mandelbrot extends Canvas {
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		i.createFrameBuffers(0.5f);
 		i.run();
 	}
 
@@ -115,7 +115,6 @@ public class Mandelbrot extends Canvas {
 		if (downdown) yOff += delta * zoom * speed;
 		if (leftdown) xOff -= delta * zoom * speed;
 		if (rightdown) xOff += delta * zoom * speed;
-		
 	}
 
 	private int iterations = 32;
@@ -130,7 +129,8 @@ public class Mandelbrot extends Canvas {
 			requestFocus();
 			return;
 		}
-		Graphics g = bs.getDrawGraphics();
+		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.setColor(Color.WHITE);
 		
 		for (int x = 0; x < width; x += 1) {
