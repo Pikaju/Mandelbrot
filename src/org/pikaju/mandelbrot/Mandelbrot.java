@@ -76,7 +76,7 @@ public class Mandelbrot extends Canvas {
 
 	public static void main(String[] args) {
 		i = new Mandelbrot();
-		JFrame frame = new JFrame("Metroid");
+		JFrame frame = new JFrame("Mandelbrot");
 		frame.add(i);
 		frame.pack();
 		frame.setResizable(false);
